@@ -142,21 +142,7 @@ class AttNet(nn.Module):
         loss = 0.5 * (loss1 + loss2) + loss3
         return loss
 
-    def infer_val(self, pcds_xyzi, pcds_coord, pcds_sphere_coord, pcds_target):
-        '''
-        Input:
-            pcds_xyzi (BS, T, C, N, 1), C -> (x, y, z, intensity, dist, ...)
-            pcds_coord (BS, T, N, 3, 1), 3 -> (x_quan, y_quan, z_quan)
-            pcds_sphere_coord (BS, T, N, 2, 1), 2 -> (vertical_quan, horizon_quan)
-            pcds_target (BS, N, 1)
-        Output:
-            pred_cls, (BS, C, N, 1)
-        '''
-        pcds_xyzi = pcds_xyzi[:, :, :5].contiguous()
-        pred_cls = self.stage_forward(pcds_xyzi, pcds_coord, pcds_sphere_coord)
-        return pred_cls, pcds_target
-
-    def infer_test(self, pcds_xyzi, pcds_coord, pcds_sphere_coord):
+    def infer(self, pcds_xyzi, pcds_coord, pcds_sphere_coord):
         '''
         Input:
             pcds_xyzi (BS, T, C, N, 1), C -> (x, y, z, intensity, dist, ...)

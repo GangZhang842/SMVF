@@ -163,49 +163,14 @@ class AttNet(nn.Module):
         loss = 0.5 * (loss1 + loss2) + loss3 + 0.5 * (loss_bev1 + loss_bev2)
         return loss
 
-    def infer_val(self, pcds_xyzi, pcds_coord, pcds_sphere_coord, pcds_target):
+    def infer(self, pcds_xyzi, pcds_coord, pcds_sphere_coord):
         '''
         Input:
             pcds_xyzi (BS, T, C, N, 1), C -> (x, y, z, intensity, dist, ...)
             pcds_coord (BS, T, N, 3, 1), 3 -> (x_quan, y_quan, z_quan)
             pcds_sphere_coord (BS, T, N, 2, 1), 2 -> (vertical_quan, horizon_quan)
-            pcds_target (BS, N, 1)
         Output:
             pred_cls, (BS, C, N, 1)
         '''
         pred_cls, pred_bev_cls = self.stage_forward(pcds_xyzi, pcds_coord, pcds_sphere_coord)
-        return pred_cls, pcds_target
-
-    def infer_test(self, point_feat, pcds_coord, pcds_sphere_coord):
-        '''
-        Input:
-            point_feat (BS, T, C, N, 1), C -> (x, y, z, intensity, dist, ...)
-            pcds_coord (BS, T, N, 3, 1), 3 -> (x_quan, y_quan, z_quan)
-            pcds_sphere_coord (BS, T, N, 2, 1), 2 -> (vertical_quan, horizon_quan)
-        Output:
-            pred_cls, (BS, C, N, 1)
-        '''
-        BS, T, C, N, _ = point_feat.shape
-
-        pcds_cood_cur = pcds_coord[:, 0, :, :2].contiguous()
-        pcds_sphere_coord_cur = pcds_sphere_coord[:, 0].contiguous()
-
-        # BEV
-        point_feat_tmp = self.point_pre(point_feat.view(BS*T, C, N, 1))
-        bev_input = VoxelMaxPool(pcds_feat=point_feat_tmp, pcds_ind=pcds_coord.view(BS*T, N, 3, 1)[:, :, :2].contiguous(), output_size=self.bev_wl_shape, scale_rate=(1.0, 1.0)) #(BS*T, C, H, W)
-        bev_input = bev_input.view(BS, -1, self.bev_wl_shape[0], self.bev_wl_shape[1])
-        bev_feat = self.bev_net(bev_input)
-        point_bev_feat = self.bev_grid2point(bev_feat, pcds_cood_cur)
-
-        # range-view
-        point_feat_tmp_cur = point_feat_tmp.view(BS, T, -1, N, 1)[:, 0].contiguous()
-        rv_input = VoxelMaxPool(pcds_feat=point_feat_tmp_cur, pcds_ind=pcds_sphere_coord_cur, output_size=self.rv_shape, scale_rate=(1.0, 1.0))
-        rv_feat = self.rv_net(rv_input)
-        point_rv_feat = self.rv_grid2point(rv_feat, pcds_sphere_coord_cur)
-
-        # merge multi-view
-        point_feat_out = self.point_post(point_feat_tmp_cur, point_bev_feat, point_rv_feat)
-
-        # pred
-        pred_cls = self.pred_layer(point_feat_out).float()
         return pred_cls

@@ -32,16 +32,16 @@ def main(args, config):
     model_prefix = os.path.join(save_path, "checkpoint")
 
     #define dataloader
-    test_dataset = eval('datasets.{}.DataloadTest'.format(pDataset.Val.data_src))(pDataset.Val)
-    test_loader = DataLoader(test_dataset, batch_size=1, num_workers=4)
-    test_loader = iter(test_loader)
+    val_dataset = eval('datasets.{}.DataloadVal'.format(pDataset.Val.data_src))(pDataset.Val)
+    val_loader = DataLoader(val_dataset, batch_size=1, num_workers=4)
+    val_loader = iter(val_loader)
 
     #define model
     model = eval(pModel.prefix)(pModel)
     model.eval()
     model.cuda()
 
-    pcds_xyzi, pcds_coord, pcds_sphere_coord, valid_mask_list, pad_length_list, meta_list_raw = test_loader.next()
+    pcds_xyzi, pcds_coord, pcds_sphere_coord, pcds_target, valid_mask_list, pad_length_list, meta_list_raw = val_loader.next()
 
     pcds_xyzi = pcds_xyzi[0, [0]].contiguous().cuda()
     pcds_coord = pcds_coord[0, [0]].contiguous().cuda()
@@ -52,7 +52,7 @@ def main(args, config):
     with torch.no_grad():
         for i in range(1000):
             start = time.time()
-            pred_cls = model.infer_test(pcds_xyzi, pcds_coord, pcds_sphere_coord)
+            pred_cls = model.infer(pcds_xyzi, pcds_coord, pcds_sphere_coord)
             torch.cuda.synchronize()
             end = time.time()
             time_cost.append(end - start)

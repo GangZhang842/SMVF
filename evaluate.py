@@ -31,8 +31,8 @@ def val_fp16(epoch, model, val_loader, category_list, save_path, rank=0):
     with torch.no_grad():
         for i, (pcds_xyzi, pcds_coord, pcds_sphere_coord, pcds_target, valid_mask_list, pad_length_list, meta_list_raw) in tqdm.tqdm(enumerate(val_loader)):
             with torch.cuda.amp.autocast():
-                pred_cls, pcds_target = model.infer_val(pcds_xyzi.squeeze(0).cuda(), pcds_coord.squeeze(0).cuda(),\
-                    pcds_sphere_coord.squeeze(0).cuda(), pcds_target.cuda())
+                pred_cls, pcds_target = model.infer(pcds_xyzi.squeeze(0).cuda(), pcds_coord.squeeze(0).cuda(),\
+                    pcds_sphere_coord.squeeze(0).cuda())
             
             pred_cls = F.softmax(pred_cls, dim=1)
             pred_cls = pred_cls.mean(dim=0).permute(2, 1, 0).squeeze(0).contiguous()
@@ -58,8 +58,8 @@ def val(epoch, model, val_loader, category_list, save_path, rank=0):
     f = open(os.path.join(save_path, 'record_{}.txt'.format(rank)), 'a')
     with torch.no_grad():
         for i, (pcds_xyzi, pcds_coord, pcds_sphere_coord, pcds_target, valid_mask_list, pad_length_list, meta_list_raw) in tqdm.tqdm(enumerate(val_loader)):
-            pred_cls, pcds_target = model.infer_val(pcds_xyzi.squeeze(0).cuda(), pcds_coord.squeeze(0).cuda(),\
-                pcds_sphere_coord.squeeze(0).cuda(), pcds_target.cuda())
+            pred_cls, pcds_target = model.infer(pcds_xyzi.squeeze(0).cuda(), pcds_coord.squeeze(0).cuda(),\
+                pcds_sphere_coord.squeeze(0).cuda())
             
             pred_cls = F.softmax(pred_cls, dim=1)
             pred_cls = pred_cls.mean(dim=0).permute(2, 1, 0).squeeze(0).contiguous()

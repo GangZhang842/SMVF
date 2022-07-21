@@ -134,27 +134,14 @@ class AttNet(nn.Module):
         pred_cls = self.stage_forward(pcds_xyzi, pcds_coord, pcds_sphere_coord)
         pred_cls_raw = self.stage_forward(pcds_xyzi_raw, pcds_coord_raw, pcds_sphere_coord_raw)
 
-        loss1 = self.criterion_seg_cate(pred_cls, pcds_target) + 2 * lovasz_softmax(pred_cls, pcds_target, ignore=0)
-        loss2 = self.criterion_seg_cate(pred_cls_raw, pcds_target) + 2 * lovasz_softmax(pred_cls_raw, pcds_target, ignore=0)
+        loss1 = self.criterion_seg_cate(pred_cls, pcds_target) + 3 * lovasz_softmax(pred_cls, pcds_target, ignore=0)
+        loss2 = self.criterion_seg_cate(pred_cls_raw, pcds_target) + 3 * lovasz_softmax(pred_cls_raw, pcds_target, ignore=0)
         loss3 = self.consistency_loss_l1(pred_cls, pred_cls_raw)
 
         loss = 0.5 * (loss1 + loss2) + loss3
         return loss
 
-    def infer_val(self, pcds_xyzi, pcds_coord, pcds_sphere_coord, pcds_target):
-        '''
-        Input:
-            pcds_xyzi (BS, T, C, N, 1), C -> (x, y, z, intensity, dist, ...)
-            pcds_coord (BS, T, N, 3, 1), 3 -> (x_quan, y_quan, z_quan)
-            pcds_sphere_coord (BS, T, N, 2, 1), 2 -> (vertical_quan, horizon_quan)
-            pcds_target (BS, N, 1)
-        Output:
-            pred_cls, (BS, C, N, 1)
-        '''
-        pred_cls = self.stage_forward(pcds_xyzi, pcds_coord, pcds_sphere_coord)
-        return pred_cls, pcds_target
-
-    def infer_test(self, pcds_xyzi, pcds_coord, pcds_sphere_coord):
+    def infer(self, pcds_xyzi, pcds_coord, pcds_sphere_coord):
         '''
         Input:
             pcds_xyzi (BS, T, C, N, 1), C -> (x, y, z, intensity, dist, ...)
