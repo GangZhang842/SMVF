@@ -1,5 +1,5 @@
 # **Sequential Multi-View Fusion Network for Fast LiDAR Point Motion Estimation**
-![teaser](./imgs/overview.pdf)
+![teaser](./imgs/overview-0.png)
 
 Official code for SMVF
 
@@ -9,9 +9,9 @@ Official code for SMVF
 
 ## NEWS
 
-[2022-07-03] SMVF is accepted by ECCV 2022
-[2022-03-07] SMVF achieves 1st place in [SemanticKITTI Moving Object Segmentation leaderboard](https://competitions.codalab.org/competitions/28894#results).
-![teaser](./imgs/smvf_semkitti.pdf)
+- [2022-07-03] SMVF is accepted by ECCV 2022
+- [2022-03-07] SMVF achieves 1st place in [SemanticKITTI Moving Object Segmentation leaderboard](https://competitions.codalab.org/competitions/28894#results).
+![teaser](./imgs/smvf_semkitti-0.png)
 
 #### 1 Dependency
 
