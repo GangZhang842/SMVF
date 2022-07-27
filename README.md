@@ -33,7 +33,7 @@ python setup.py install
 
 ##### 2.2 Prepare Dataset
 
-Please download the [SemanticKITTI](http://www.semantic-kitti.org/dataset.html#overview) dataset to the folder `data` and the structure of the folder should look like:
+Please download the [SemanticKITTI](http://www.semantic-kitti.org/dataset.html#overview) dataset to the folder `SemanticKITTI` and the structure of the folder should look like:
 
 ```
 ./
@@ -56,14 +56,28 @@ Please download the [SemanticKITTI](http://www.semantic-kitti.org/dataset.html#o
 	        └── ...
 ```
 
+And download the [object bank](https://drive.google.com/file/d/1QdSpkMLixvKQL6QPircbDI_0-GlGwsdj/view?usp=sharing) on the SemanticKITTI to the folder `object_bank_semkitti` and the structure of the folder should look like:
+
+```
+./
+├── bicycle
+├── bicyclist
+├── car
+├── motorcycle
+├── motorcyclist
+├── other-vehicle
+├── person
+├── truck
+```
+
 ##### 2.3 Training Script
 
 ```bash
-python3 -m torch.distributed.launch --nproc_per_node=8 train.py --config config_smvf_sgd_ohem_vfe_k2_fp16_48epoch.py
+python3 -m torch.distributed.launch --nproc_per_node=8 train.py --config config/config_smvf_sgd_ohem_vfe_k2_fp16_48epoch.py
 ```
 
 #### 3 Evaluate Process
 
 ```bash
-python3 -m torch.distributed.launch --nproc_per_node=8 evaluate.py --config config_smvf_sgd_ohem_vfe_k2_fp16_48epoch.py --start_epoch 0 --end_epoch 47
+python3 -m torch.distributed.launch --nproc_per_node=8 evaluate.py --config config/config_smvf_sgd_ohem_vfe_k2_fp16_48epoch.py --start_epoch 0 --end_epoch 47
 ```

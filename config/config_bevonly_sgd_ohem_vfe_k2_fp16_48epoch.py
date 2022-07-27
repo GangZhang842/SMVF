@@ -28,8 +28,8 @@ def get_config():
             Voxel = General.Voxel
             seq_num = General.K + 1
             class CopyPasteAug:
-                is_use = False
-                ObjBackDir = ''
+                is_use = True
+                ObjBackDir = 'object_bank_semkitti'
                 paste_max_obj_num = 20
             class AugParam:
                 noise_mean = 0
