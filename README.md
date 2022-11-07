@@ -4,7 +4,7 @@
 Official code for SMVF
 
 > **Sequential Multi-View Fusion Network for Fast LiDAR Point Motion Estimation**,
-> Gang Zhang, Xiaoyan Li, Zhenhua Wang.
+> Gang Zhang, Xiaoyan Li, Zhenhua Wang. (https://www.ecva.net/papers/eccv_2022/papers_ECCV/papers/136820282.pdf)
 > *Accepted by ECCV2022*
 
 ## NEWS
